@@ -19,7 +19,7 @@ public class Users {
   private Timestamp created_at;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List <Profiles> profiles;
+  private List <Profiles> profile;
 
   public Users() {
 
