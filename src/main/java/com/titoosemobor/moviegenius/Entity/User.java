@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.Entities;
+package com.titoosemobor.moviegenius.Entity;
 
 import jakarta.persistence.*;
 
@@ -19,7 +19,7 @@ public class User {
   private Timestamp created_at;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List <Profile> profiles;
+  private List<Profile> profiles;
 
   public User() {
 

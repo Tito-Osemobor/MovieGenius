@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.Entities;
+package com.titoosemobor.moviegenius.Entity;
 
 import jakarta.persistence.*;
 
@@ -11,9 +11,8 @@ public class Profile {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long profile_id;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-  private User user;
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  private User user;
 
   private String profile_name;
 
@@ -62,11 +61,11 @@ public class Profile {
     return profile_id;
   }
 
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
+//  public User getUser() {
+//    return user;
+//  }
+//
+//  public void setUser(User user) {
+//    this.user = user;
+//  }
 }
