@@ -11,8 +11,8 @@ public class Profile {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long profile_id;
 
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private User user;
 
   private String profile_name;
 
