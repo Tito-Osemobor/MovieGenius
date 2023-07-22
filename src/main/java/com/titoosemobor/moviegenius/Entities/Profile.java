@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.Entity;
+package com.titoosemobor.moviegenius.Entities;
 
 import jakarta.persistence.*;
 
@@ -6,10 +6,14 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "profiles")
-public class Profiles {
+public class Profile {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long profile_id;
+
+  @ManyToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+  private User user;
 
   private String profile_name;
 
@@ -17,11 +21,11 @@ public class Profiles {
 
   private Timestamp created_at;
 
-  public Profiles() {
+  public Profile() {
 
   }
 
-  public Profiles(String profile_name) {
+  public Profile(String profile_name) {
     this.profile_name = profile_name;
     this.created_at = new Timestamp(System.currentTimeMillis());
   }
@@ -56,5 +60,13 @@ public class Profiles {
 
   public Long getProfile_id() {
     return profile_id;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 }

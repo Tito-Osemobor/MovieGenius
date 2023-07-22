@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.Entity;
+package com.titoosemobor.moviegenius.Entities;
 
 import jakarta.persistence.*;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
   @Id
   @GeneratedValue
   private Long user_id;
@@ -19,13 +19,13 @@ public class Users {
   private Timestamp created_at;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List <Profiles> profile;
+  private List <Profile> profiles;
 
-  public Users() {
+  public User() {
 
   }
 
-  public Users(String email, String password) {
+  public User(String email, String password) {
     this.email = email;
     this.password = password;
     this.created_at = new Timestamp(System.currentTimeMillis());
@@ -61,5 +61,13 @@ public class Users {
 
   public Long getUser_id() {
     return user_id;
+  }
+
+  public List<Profile> getProfiles() {
+    return profiles;
+  }
+
+  public void setProfiles(List<Profile> profiles) {
+    this.profiles = profiles;
   }
 }
