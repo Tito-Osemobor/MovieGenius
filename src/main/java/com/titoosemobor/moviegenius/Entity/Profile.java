@@ -12,6 +12,7 @@ public class Profile {
   private Long profile_id;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", referencedColumnName = "user_id")
   private User user;
 
   private String profile_name;
