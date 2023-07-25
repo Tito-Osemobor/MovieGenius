@@ -1,5 +1,6 @@
 package com.titoosemobor.moviegenius.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -12,7 +13,8 @@ public class Profile {
   private Long profile_id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @JsonIgnore
   private User user;
 
   private String profile_name;
@@ -25,8 +27,16 @@ public class Profile {
 
   }
 
-  public Profile(String profile_name) {
+  public Profile(User user, String profile_name) {
+    this.user = user;
     this.profile_name = profile_name;
+    this.created_at = new Timestamp(System.currentTimeMillis());
+  }
+
+  public Profile(User user, String profile_name, String profile_image) {
+    this.user = user;
+    this.profile_name = profile_name;
+    this.profile_image = profile_image;
     this.created_at = new Timestamp(System.currentTimeMillis());
   }
 
@@ -62,11 +72,11 @@ public class Profile {
     return profile_id;
   }
 
-//  public User getUser() {
-//    return user;
-//  }
-//
-//  public void setUser(User user) {
-//    this.user = user;
-//  }
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 }

@@ -1,5 +1,6 @@
 package com.titoosemobor.moviegenius.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ public class User {
   private Timestamp created_at;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<Profile> profiles;
 
   public User() {
