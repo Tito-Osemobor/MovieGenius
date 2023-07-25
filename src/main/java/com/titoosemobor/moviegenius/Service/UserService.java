@@ -1,7 +1,7 @@
 package com.titoosemobor.moviegenius.Service;
 
-import com.titoosemobor.moviegenius.DTOMapper.UserDTOMapper;
-import com.titoosemobor.moviegenius.DataTransferObject.UserDTO;
+import com.titoosemobor.moviegenius.DTO.UserDTOMapper;
+import com.titoosemobor.moviegenius.DTO.UserDTOResponse;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,14 @@ public class UserService {
   @Autowired
   private UserDTOMapper userDTOMapper;
 
-  public List<UserDTO> allUsers() {
+  public List<UserDTOResponse> allUsers() {
     return userRepository.findAll()
       .stream()
       .map(userDTOMapper)
       .collect(Collectors.toList());
   }
 
-  public Optional<UserDTO> userById(Long id) {
+  public Optional<UserDTOResponse> userById(Long id) {
     return userRepository.findById(id)
       .map(userDTOMapper);
   }

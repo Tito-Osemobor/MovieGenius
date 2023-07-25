@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.DataTransferObject;
+package com.titoosemobor.moviegenius.DTO;
 
 import com.titoosemobor.moviegenius.Entity.User;
 import org.springframework.stereotype.Service;

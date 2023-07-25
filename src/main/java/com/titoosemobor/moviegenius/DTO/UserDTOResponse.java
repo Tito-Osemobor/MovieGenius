@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.DataTransferObject;
+package com.titoosemobor.moviegenius.DTO;
 
 import com.titoosemobor.moviegenius.Entity.Profile;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserDTO {
+public class UserDTOResponse {
   private Long user_id;
   private String email;
   private Timestamp created_at;

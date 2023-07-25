@@ -1,6 +1,6 @@
 package com.titoosemobor.moviegenius.Controller;
 
-import com.titoosemobor.moviegenius.DataTransferObject.UserDTO;
+import com.titoosemobor.moviegenius.DTO.UserDTOResponse;
 import com.titoosemobor.moviegenius.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +18,12 @@ public class UserController {
   private UserService userService;
 
   @GetMapping("/users")
-  public ResponseEntity<List<UserDTO>> getUsers () {
+  public ResponseEntity<List<UserDTOResponse>> getUsers () {
     return new ResponseEntity<>(userService.allUsers(), HttpStatus.OK);
   }
 
   @GetMapping("/users/{id}")
-  public ResponseEntity<Optional<UserDTO>> getUserById(@PathVariable Long id) {
+  public ResponseEntity<Optional<UserDTOResponse>> getUserById(@PathVariable Long id) {
     return new ResponseEntity<>(userService.userById(id), HttpStatus.OK);
   }
 }
