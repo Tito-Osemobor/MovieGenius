@@ -10,7 +10,7 @@ import java.util.List;
 public class User {
   @Id
   @GeneratedValue
-  private Long user_id;
+  private Long id;
 
   private String email;
 
@@ -55,12 +55,12 @@ public class User {
     this.created_at = created_at;
   }
 
-  public void setUser_id(Long user_id) {
-    this.user_id = user_id;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public Long getUser_id() {
-    return user_id;
+  public Long getId() {
+    return id;
   }
 
   public List<Profile> getProfiles() {
