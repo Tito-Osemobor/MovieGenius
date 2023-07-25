@@ -1,20 +1,23 @@
 package com.titoosemobor.moviegenius.DTO;
 
 import com.titoosemobor.moviegenius.Entity.Profile;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
 @Setter
 public class UserDTORequest {
-  private Long user_id;
   private String email;
-  private Timestamp created_at;
+  private String password;
   private List<Profile> profiles;
+
+  public UserDTORequest(String email, String password) {
+    this.email = email;
+    this.password = password;
+    this.profiles = new ArrayList<>();
+  }
 }
 
