@@ -1,6 +1,7 @@
 package com.titoosemobor.moviegenius.Service;
 
 import com.titoosemobor.moviegenius.DTO.UserDTOMapper;
+import com.titoosemobor.moviegenius.DTO.UserDTORequest;
 import com.titoosemobor.moviegenius.DTO.UserDTOResponse;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class UserService {
 
   public Optional<UserDTOResponse> userById(Long id) {
     return userRepository.findById(id)
+      .map(userDTOMapper);
+  }
+
+  public Optional<UserDTOResponse> userByEmailAndPassword(UserDTORequest userDTORequest) {
+    return userRepository.findUsersByEmailAndPassword(userDTORequest.getEmail(), userDTORequest.getPassword())
       .map(userDTOMapper);
   }
 }
