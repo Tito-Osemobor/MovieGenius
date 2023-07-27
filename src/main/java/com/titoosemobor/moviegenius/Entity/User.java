@@ -2,19 +2,25 @@ package com.titoosemobor.moviegenius.Entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
 public class User implements UserDetails {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
 
   private String email;
@@ -30,14 +36,24 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  public User() {
-
+  public User(String email, String password, Role role) {
+    this.email = email;
+    this.password = password;
+    this.created_at = new Timestamp(System.currentTimeMillis());
+    this.role = role;
+    this.profiles = new ArrayList<>();
   }
 
   public User(String email, String password) {
     this.email = email;
     this.password = password;
     this.created_at = new Timestamp(System.currentTimeMillis());
+    this.role = Role.USER;
+    this.profiles = new ArrayList<>();
+  }
+
+  public User() {
+
   }
 
   public String getEmail() {
