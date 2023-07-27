@@ -32,7 +32,7 @@ public class UserService {
   }
 
   public Optional<UserDTOResponse> userByEmailAndPassword(UserDTORequest userDTORequest) {
-    return userRepository.findUsersByEmailAndPassword(userDTORequest.getEmail(), userDTORequest.getPassword())
+    return userRepository.findUserByEmailAndPassword(userDTORequest.getEmail(), userDTORequest.getPassword())
       .map(userDTOMapper);
   }
 }
