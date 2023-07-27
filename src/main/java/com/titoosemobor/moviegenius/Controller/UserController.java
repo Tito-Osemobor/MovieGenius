@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/moviegenius")
 public class UserController {
   @Autowired
   private UserService userService;
@@ -31,7 +32,7 @@ public class UserController {
     return new ResponseEntity<>(userService.userByEmailAndPassword(userDTORequest), HttpStatus.OK);
   }
 
-  @PostMapping("/sign-up")
+  @PostMapping("/signup")
   public ResponseEntity<String> createNewUser(@RequestBody UserDTORequest userDTORequest) {
     return null;
   }
