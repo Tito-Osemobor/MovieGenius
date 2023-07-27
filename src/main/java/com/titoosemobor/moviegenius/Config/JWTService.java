@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ import java.util.function.Function;
 
 @Service
 public class JWTService {
-  private static final String SECRET_KEY = System.getenv("SECRET_KEY");
+  static Dotenv dotenv = Dotenv.configure().load();;
+  private static final String SECRET_KEY = dotenv.get("SECRET_KEY");
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
