@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 @Service
 public class UserDTOMapper implements Function<User, UserDTOResponse> {
+
+  public static final UserDTOMapper INSTANCE = new UserDTOMapper();
   @Override
   public UserDTOResponse apply(User user) {
     return new UserDTOResponse(
