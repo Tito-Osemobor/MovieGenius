@@ -3,8 +3,10 @@ package com.titoosemobor.moviegenius.Auth;
 import com.titoosemobor.moviegenius.Config.JWTService;
 import com.titoosemobor.moviegenius.Entity.Role;
 import com.titoosemobor.moviegenius.Entity.User;
+import com.titoosemobor.moviegenius.Exception.UserException;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,17 +23,23 @@ public class AuthenticationService {
   private final JWTService jwtService;
   private final AuthenticationManager authenticationManager;
   public AuthenticationResponse register(RegisterRequest registerRequest) {
-    var user = User.builder()
-      .email(registerRequest.getEmail())
-      .password(passwordEncoder.encode(registerRequest.getPassword()))
-      .role(Role.USER)
-      .created_at(new Timestamp(System.currentTimeMillis()))
-      .build();
-    userRepository.save(user);
-    var jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-      .token(jwtToken)
-      .build();
+    try {
+      var user = User.builder()
+        .email(registerRequest.getEmail())
+        .password(passwordEncoder.encode(registerRequest.getPassword()))
+        .role(Role.USER)
+        .created_at(new Timestamp(System.currentTimeMillis()))
+        .build();
+      userRepository.save(user);
+      var jwtToken = jwtService.generateToken(user);
+      return AuthenticationResponse.builder()
+        .token(jwtToken)
+        .build();
+    } catch (DataIntegrityViolationException ex) {
+        throw new UserException.EmailAlreadyUsedException("Email address already exists");
+    } catch (Exception ex) {
+      throw new UserException();
+    }
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest registerRequest) {
