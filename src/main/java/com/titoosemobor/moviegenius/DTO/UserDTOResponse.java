@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UserDTOResponse {
-  private Long user_id;
   private String email;
   private Timestamp created_at;
   private List<Profile> profiles;
