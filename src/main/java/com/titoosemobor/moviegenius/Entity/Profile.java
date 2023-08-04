@@ -1,20 +1,25 @@
 package com.titoosemobor.moviegenius.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "profiles")
+@Builder
+@AllArgsConstructor
 public class Profile {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long profile_id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", referencedColumnName = "id")
-  @JsonIgnore
+  @JsonBackReference
   private User user;
 
   private String profile_name;
