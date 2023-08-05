@@ -1,5 +1,6 @@
 package com.titoosemobor.moviegenius.Auth;
 
+import com.titoosemobor.moviegenius.Exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,19 @@ public class AuthenticationController {
   @Autowired
   private final AuthenticationService service;
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register (
+  public ResponseEntity<?> register (
     @RequestBody RegisterRequest registerRequest
   ) {
-    return ResponseEntity.ok(service.register(registerRequest));
+    try {
+      return ResponseEntity.ok(service.register(registerRequest));
+    } catch (UserException.InvalidInputException ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    } catch (UserException.EmailAlreadyUsedException ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
   }
 
-  @PostMapping("/authenticate")
+  @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> register (
     @RequestBody AuthenticationRequest registerRequest
   ) {
