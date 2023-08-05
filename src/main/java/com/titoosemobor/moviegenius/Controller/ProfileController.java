@@ -41,4 +41,10 @@ public class ProfileController {
     UserProfileDTO updateProfileDTO = profileService.updateProfile(profileId, userProfileDTO);
     return ResponseEntity.ok(updateProfileDTO);
   }
+
+  @DeleteMapping("/delete/{profileId}")
+  public ResponseEntity<UserProfileDTO> deleteUserProfile(@PathVariable Long profileId) {
+    UserProfileDTO deleteProfileDTO = profileService.deleteProfile(profileId);
+    return ResponseEntity.ok(deleteProfileDTO);
+  }
 }
