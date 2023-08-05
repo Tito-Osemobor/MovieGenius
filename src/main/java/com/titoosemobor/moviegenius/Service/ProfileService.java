@@ -48,4 +48,10 @@ public class ProfileService {
     profileRepository.save(profile);
     return UserProfileDTOMapper.INSTANCE.apply(profile);
   }
+
+  public UserProfileDTO deleteProfile(Long profileId) {
+    Profile profile = profileRepository.findProfileById(profileId);
+    profileRepository.deleteById(profileId);
+    return UserProfileDTOMapper.INSTANCE.apply(profile);
+  }
 }
