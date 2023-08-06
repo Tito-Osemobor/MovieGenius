@@ -12,9 +12,9 @@ public class UserProfileDTOMapper implements Function<Profile, UserProfileDTO> {
   public UserProfileDTO apply(Profile profile) {
     return new UserProfileDTO(
       profile.getId(),
-      profile.getProfile_name(),
-      profile.getProfile_image(),
-      profile.getCreated_at()
+      profile.getProfileName(),
+      profile.getProfileImage(),
+      profile.getCreatedAt()
     );
   }
 }

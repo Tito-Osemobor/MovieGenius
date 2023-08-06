@@ -6,7 +6,6 @@ import com.titoosemobor.moviegenius.Entity.User;
 import com.titoosemobor.moviegenius.Exception.UserException;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +34,7 @@ public class AuthenticationService {
       .email(registerRequest.getEmail())
       .password(passwordEncoder.encode(registerRequest.getPassword()))
       .role(Role.USER)
-      .created_at(new Timestamp(System.currentTimeMillis()))
+      .createdAt(new Timestamp(System.currentTimeMillis()))
       .build();
     userRepository.save(user);
     var jwtToken = jwtService.generateToken(user);

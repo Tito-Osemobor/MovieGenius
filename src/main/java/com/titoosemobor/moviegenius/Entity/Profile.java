@@ -26,9 +26,12 @@ public class Profile {
   @JsonBackReference
   private User user;
 
-  private String profile_name;
+  @Column(name = "profile_name")
+  private String profileName;
 
-  private String profile_image;
+  @Column(name = "profile_image")
+  private String profileImage;
 
-  private Timestamp created_at;
+  @Column(name = "created_at")
+  private Timestamp createdAt;
 }

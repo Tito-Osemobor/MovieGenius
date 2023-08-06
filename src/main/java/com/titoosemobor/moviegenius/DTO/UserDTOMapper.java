@@ -13,7 +13,7 @@ public class UserDTOMapper implements Function<User, UserDTOResponse> {
   public UserDTOResponse apply(User user) {
     return new UserDTOResponse(
       user.getEmail(),
-      user.getCreated_at(),
+      user.getCreatedAt(),
       user.getProfiles()
     );
   }

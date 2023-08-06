@@ -13,6 +13,6 @@ import java.util.List;
 @Setter
 public class UserDTOResponse {
   private String email;
-  private Timestamp created_at;
+  private Timestamp createdAt;
   private List<Profile> profiles;
 }
