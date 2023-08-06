@@ -5,6 +5,7 @@ import com.titoosemobor.moviegenius.DTO.UserProfileDTO;
 import com.titoosemobor.moviegenius.DTO.UserProfileDTOMapper;
 import com.titoosemobor.moviegenius.Entity.Profile;
 import com.titoosemobor.moviegenius.Entity.User;
+import com.titoosemobor.moviegenius.Exception.ProfileException;
 import com.titoosemobor.moviegenius.Repository.ProfileRepository;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,22 @@ public class ProfileService {
       .collect(Collectors.toList());
   }
 
+  public Profile ProfileById(Long profileId) {
+    return profileRepository.findProfileById(profileId);
+  }
+
   public UserProfileDTO createProfile(User user, UserProfileDTO userProfileDTO) {
+    if (user.getProfiles().size() == 4) {
+      throw new ProfileException.MaxNumberOfProfiles("Maximum Number of Profiles");
+    }
+    if (profileRepository.existsProfileByUserAndProfileName(user, userProfileDTO.getProfileName())) {
+      throw new ProfileException.NameAlreadyInUse("Profile name already in use");
+    }
     Profile profile = Profile.builder()
-      .profile_name(userProfileDTO.getProfile_name())
-      .profile_image(userProfileDTO.getProfile_image())
+      .profileName(userProfileDTO.getProfileName())
+      .profileImage(userProfileDTO.getProfileImage())
       .user(user)
-      .created_at(new Timestamp(System.currentTimeMillis()))
+      .createdAt(new Timestamp(System.currentTimeMillis()))
       .build();
     profileRepository.save(profile);
     return UserProfileDTOMapper.INSTANCE.apply(profile);
@@ -43,8 +54,16 @@ public class ProfileService {
 
   public UserProfileDTO updateProfile(Long id, UserProfileDTO userProfileDTO) {
     Profile profile = profileRepository.findProfileById(id);
-    profile.setProfile_name(userProfileDTO.getProfile_name());
-    profile.setProfile_image(userProfileDTO.getProfile_image());
+    String newProfileName = userProfileDTO.getProfileName();
+
+    if (!newProfileName.equals(profile.getProfileName())) {
+      boolean profileNameExistsForUser = profileRepository.existsProfileByUserAndProfileName(profile.getUser(), newProfileName);
+      if (profileNameExistsForUser) {
+        throw new ProfileException.NameAlreadyInUse("Profile name is already in use.");
+      }
+    }
+    profile.setProfileName(userProfileDTO.getProfileName());
+    profile.setProfileImage(userProfileDTO.getProfileImage());
     profileRepository.save(profile);
     return UserProfileDTOMapper.INSTANCE.apply(profile);
   }
