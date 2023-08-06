@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class User implements UserDetails {
   @Id
@@ -28,9 +30,10 @@ public class User implements UserDetails {
 
   private String password;
 
-  private Timestamp created_at;
+  @Column(name = "created_at")
+  private Timestamp createdAt;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   @JsonManagedReference
   private List<Profile> profiles;
 
@@ -40,7 +43,7 @@ public class User implements UserDetails {
   public User(String email, String password, Role role) {
     this.email = email;
     this.password = password;
-    this.created_at = new Timestamp(System.currentTimeMillis());
+    this.createdAt = new Timestamp(System.currentTimeMillis());
     this.role = role;
     this.profiles = new ArrayList<>();
   }
@@ -48,30 +51,14 @@ public class User implements UserDetails {
   public User(String email, String password) {
     this.email = email;
     this.password = password;
-    this.created_at = new Timestamp(System.currentTimeMillis());
+    this.createdAt = new Timestamp(System.currentTimeMillis());
     this.role = Role.USER;
     this.profiles = new ArrayList<>();
-  }
-
-  public User() {
-
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));
-  }
-
-  public String getPassword() {
-    return password;
   }
 
   @Override
@@ -97,33 +84,5 @@ public class User implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public Timestamp getCreated_at() {
-    return created_at;
-  }
-
-  public void setCreated_at(Timestamp created_at) {
-    this.created_at = created_at;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public List<Profile> getProfiles() {
-    return profiles;
-  }
-
-  public void setProfiles(List<Profile> profiles) {
-    this.profiles = profiles;
   }
 }
