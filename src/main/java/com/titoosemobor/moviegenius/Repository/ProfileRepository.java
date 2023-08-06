@@ -11,4 +11,5 @@ import java.util.List;
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
   List<Profile> findProfilesByUser(User user);
   Profile findProfileById(Long id);
+  Boolean existsProfileByUserAndProfileName(User user, String profileName);
 }
