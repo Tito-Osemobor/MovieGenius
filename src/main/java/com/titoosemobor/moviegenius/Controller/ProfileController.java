@@ -4,12 +4,12 @@ import com.titoosemobor.moviegenius.DTO.UserDTORequest;
 import com.titoosemobor.moviegenius.DTO.UserProfileDTO;
 import com.titoosemobor.moviegenius.Entity.Profile;
 import com.titoosemobor.moviegenius.Entity.User;
+import com.titoosemobor.moviegenius.Exception.ProfileException;
 import com.titoosemobor.moviegenius.Service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,30 +21,56 @@ public class ProfileController {
   private ProfileService profileService;
 
   @GetMapping
-  public ResponseEntity<List<UserProfileDTO>> getAllUserProfiles() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User authUser =  (User) authentication.getPrincipal();
+  public ResponseEntity<List<UserProfileDTO>> getAllUserProfiles(@AuthenticationPrincipal User authUser) {
     UserDTORequest userDTORequest = new UserDTORequest(authUser.getUsername());
     return new ResponseEntity<>(profileService.allUserProfiles(userDTORequest), HttpStatus.OK);
   }
 
   @PostMapping("/create")
-  public ResponseEntity<UserProfileDTO> createNewUserProfile(@RequestBody UserProfileDTO userProfileDTO) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User user = (User) authentication.getPrincipal();
-    UserProfileDTO createdProfile = profileService.createProfile(user, userProfileDTO);
-    return ResponseEntity.ok(createdProfile);
-  }
+  public ResponseEntity<?> createNewUserProfile(@RequestBody UserProfileDTO userProfileDTO,
+                                                             @AuthenticationPrincipal User authUser) {
+    try {
+      UserProfileDTO createdProfile = profileService.createProfile(authUser, userProfileDTO);
+      return ResponseEntity.ok(createdProfile);
+    } catch (ProfileException.MaxNumberOfProfiles ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }catch (ProfileException.NameAlreadyInUse ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+   }
 
   @PutMapping("/update/{profileId}")
-  public ResponseEntity<UserProfileDTO> updateUserProfile(@PathVariable Long profileId, @RequestBody UserProfileDTO userProfileDTO) {
-    UserProfileDTO updateProfileDTO = profileService.updateProfile(profileId, userProfileDTO);
-    return ResponseEntity.ok(updateProfileDTO);
+  public ResponseEntity<?> updateUserProfile(@PathVariable Long profileId,
+                                                          @RequestBody UserProfileDTO userProfileDTO,
+                                                          @AuthenticationPrincipal User authUser) {
+    try {
+      if (isOwnedByAuthenticatedUser(profileService.ProfileById(profileId), authUser)) {
+        UserProfileDTO updateProfileDTO = profileService.updateProfile(profileId, userProfileDTO);
+        return ResponseEntity.ok(updateProfileDTO);
+      }
+      throw new ProfileException.ProfileNotFound("Profile not found");
+    } catch (ProfileException.NameAlreadyInUse ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    } catch (ProfileException.ProfileNotFound ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
   }
 
   @DeleteMapping("/delete/{profileId}")
-  public ResponseEntity<UserProfileDTO> deleteUserProfile(@PathVariable Long profileId) {
-    UserProfileDTO deleteProfileDTO = profileService.deleteProfile(profileId);
-    return ResponseEntity.ok(deleteProfileDTO);
+  public ResponseEntity<?> deleteUserProfile(@PathVariable Long profileId,
+                                                          @AuthenticationPrincipal User authUser) {
+    try {
+      if (isOwnedByAuthenticatedUser(profileService.ProfileById(profileId), authUser)) {
+        UserProfileDTO deleteProfileDTO = profileService.deleteProfile(profileId);
+        return ResponseEntity.ok(deleteProfileDTO);
+      }
+      throw new ProfileException.ProfileNotFound("Profile not found");
+    } catch (ProfileException.ProfileNotFound ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+  }
+
+  public boolean isOwnedByAuthenticatedUser(Profile requestProfileUser, User authUser) {
+    return authUser.getEmail().equals(requestProfileUser.getUser().getEmail());
   }
 }
