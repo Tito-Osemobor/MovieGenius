@@ -63,7 +63,7 @@ public class UserController {
     }
   }
 
-  public boolean isOwnedByAuthenticatedUser(UserDTOResponse authUser, User requestUser) {
-    return authUser.getEmail().equals(requestUser.getEmail());
+  public boolean isOwnedByAuthenticatedUser(UserDTOResponse requestedUser, User authUser) {
+    return authUser.getEmail().equals(requestedUser.getEmail());
   }
 }
