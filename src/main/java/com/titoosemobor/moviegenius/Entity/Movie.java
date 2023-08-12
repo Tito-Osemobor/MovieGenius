@@ -54,7 +54,7 @@ public class Movie {
       .filter(Result::isOfficial)
       .findFirst()
       .orElse(video.getResults().get(0));
-    return "https://www.youtube.com/watch?v=" + officialResult.getKey();
+    return officialResult.getKey();
   }
 
   public void setTrailer() {
