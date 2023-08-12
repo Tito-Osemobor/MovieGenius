@@ -1,7 +1,5 @@
 package com.titoosemobor.moviegenius.Exception;
 
-import org.springframework.dao.DataIntegrityViolationException;
-
 public class UserException extends RuntimeException {
 
   public static class InvalidInputException extends RuntimeException {
