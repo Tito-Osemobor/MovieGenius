@@ -21,8 +21,6 @@ public class Movie {
   @Column(name = "movie_id")
   private Long id;
 
-  private String imdb_id;
-
   private String title;
 
   @ManyToMany(fetch = FetchType.LAZY)
@@ -50,11 +48,16 @@ public class Movie {
   private String trailer;
 
   public String getTrailer() {
-    Result officialResult = video.getResults().stream()
-      .filter(Result::isOfficial)
-      .findFirst()
-      .orElse(video.getResults().get(0));
-    return officialResult.getKey();
+    if (video != null && video.getResults() != null) {
+      Result officialResult = video.getResults().stream()
+        .filter(Result::isOfficial)
+        .findFirst()
+        .orElse(video.getResults().get(0));
+      return officialResult.getKey();
+    }
+    else {
+      return "";
+    }
   }
 
   public void setTrailer() {
