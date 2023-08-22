@@ -6,4 +6,9 @@ public class MovieException extends RuntimeException{
       super(message);
     }
   }
+  public static class GenreNotFoundException extends RuntimeException {
+    public GenreNotFoundException(String message) {
+      super(message);
+    }
+  }
 }
