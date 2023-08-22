@@ -18,8 +18,8 @@ public class MovieDTOMapper implements Function<Movie, MovieDTO> {
       movie.getGenres().stream()
         .map(Genre::getName)
         .collect(Collectors.toSet()),
-      "https://image.tmdb.org/t/p/w500" + movie.getBackdropPath(),
-      "https://image.tmdb.org/t/p/w500" + movie.getPosterPath(),
+      "https://image.tmdb.org/t/p/original" + movie.getBackdropPath(),
+      "https://image.tmdb.org/t/p/original" + movie.getPosterPath(),
       movie.getOverview(),
       "https://www.youtube.com/watch?v=" + movie.getTrailer()
     );
