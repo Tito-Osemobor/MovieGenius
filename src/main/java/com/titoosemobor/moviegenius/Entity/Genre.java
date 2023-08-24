@@ -1,5 +1,6 @@
 package com.titoosemobor.moviegenius.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public class Genre {
   private String name;
 
   @ManyToMany(mappedBy = "genres")
+  @JsonManagedReference
   private Set<Movie> movies = new HashSet<>();
 }
