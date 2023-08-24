@@ -110,11 +110,10 @@ public class TMDBApiService {
       .bodyToMono(Video.class)
       .block();
     if (video.getResults().size() > 0) {
-      String trailer = video.getResults().stream()
+      return video.getResults().stream()
         .filter(Result::isOfficial)
         .findFirst()
         .orElse(video.getResults().get(0)).getKey();
-      return trailer;
     }
     return "";
   }
