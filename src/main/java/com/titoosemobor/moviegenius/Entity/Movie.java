@@ -1,16 +1,15 @@
 package com.titoosemobor.moviegenius.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -29,6 +28,7 @@ public class Movie {
     joinColumns = @JoinColumn(name = "movie_id"),
     inverseJoinColumns = @JoinColumn(name = "genre_id")
   )
+  @JsonBackReference
   private Set<Genre> genres = new HashSet<>();
 
   @JsonProperty("backdrop_path")
@@ -56,8 +56,12 @@ public class Movie {
       return officialResult.getKey();
     }
     else {
-      return "";
+      return trailer;
     }
+  }
+
+  public void setTrailer(String trailer) {
+    this.trailer = trailer;
   }
 
   public void setTrailer() {
