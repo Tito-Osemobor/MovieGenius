@@ -2,17 +2,16 @@ package com.titoosemobor.moviegenius.TMDB;
 
 import com.titoosemobor.moviegenius.DTO.MovieDTO;
 import com.titoosemobor.moviegenius.DTO.MovieDTOMapper;
-import com.titoosemobor.moviegenius.Entity.Genre;
-import com.titoosemobor.moviegenius.Entity.Movie;
+import com.titoosemobor.moviegenius.Entity.*;
 import com.titoosemobor.moviegenius.Exception.MovieException;
 import com.titoosemobor.moviegenius.Repository.GenreRepository;
 import com.titoosemobor.moviegenius.Repository.MovieRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,11 +23,14 @@ public class TMDBApiService {
   @Autowired
   private GenreRepository genreRepository;
 
-
   public Optional<MovieDTO> fetchMovieById(long movieId) {
     Optional<Movie> movieOptional = Optional.ofNullable(tmdbApiClient.getWebClient()
       .get()
-      .uri("/movie/{id}?append_to_response=videos", movieId)
+        .uri(UriComponentsBuilder
+          .fromUriString("/movie/{id}")
+          .queryParam("append_to_response","videos")
+          .buildAndExpand(movieId)
+          .toUriString())
       .retrieve()
       .bodyToMono(Movie.class)
       .block());
@@ -50,7 +52,74 @@ public class TMDBApiService {
     movie.setGenres(existingGenres);
 
     movieRespository.save(movie);
-    Optional<MovieDTO> movieDTO = Optional.of(MovieDTOMapper.INSTANCE.apply(movie));
-    return movieDTO;
+    return Optional.of(MovieDTOMapper.INSTANCE.apply(movie));
+  }
+
+  public Optional<Set<MovieDTO>> fetchMoviesByGenre(Integer genreId) {
+    Discover discover = tmdbApiClient.getWebClient()
+      .get()
+      .uri(UriComponentsBuilder
+        .fromUriString("/discover/movie")
+        .queryParam("page", 1)
+        .queryParam("include_video", true)
+        .queryParam("with_genres", genreId)
+        .buildAndExpand(genreId)
+        .toUriString())
+      .retrieve()
+      .bodyToMono(Discover.class)
+      .block();
+
+    Set<Long> allGenreIds = discover.getResults().stream()
+      .flatMap(movieResponse -> movieResponse.getGenre_ids().stream())
+      .collect(Collectors.toSet());
+    Map<Long, Genre> genreMap = genreRepository.findAllByIdIn(allGenreIds).stream()
+      .collect(Collectors.toMap(Genre::getId, Function.identity()));
+    Set<Movie> movies = discover.getResults().stream()
+      .map(movieResponse -> {
+        Set<Genre> genres = movieResponse.getGenre_ids().stream()
+          .map(genreMap::get)
+          .collect(Collectors.toSet());
+        String trailer = fetchMovieTrailer(movieResponse.getId());
+        if (movieResponse.getBackdropPath() == null || movieResponse.getPosterPath() == null ||
+          movieResponse.getOverview() == null || trailer.isEmpty()) {
+          return null;
+        }
+        Movie movie =  Movie.builder()
+          .id(movieResponse.getId())
+          .title(movieResponse.getTitle())
+          .genres(genres)
+          .backdropPath(movieResponse.getBackdropPath())
+          .posterPath(movieResponse.getPosterPath())
+          .overview(movieResponse.getOverview())
+          .trailer(trailer)
+          .build();
+        movieRespository.save(movie);
+        return movie;
+      })
+      .filter(Objects::nonNull)
+      .collect(Collectors.toSet());
+    movieRespository.saveAll(movies);
+    return Optional.of(movies.stream().map(MovieDTOMapper.INSTANCE::apply).collect(Collectors.toSet()));
+  }
+
+  public String fetchMovieTrailer(Long movieId) {
+    Video video = tmdbApiClient.getWebClient()
+      .get()
+      .uri("/movie/{movie_id}/videos", movieId)
+      .retrieve()
+      .bodyToMono(Video.class)
+      .block();
+    if (video.getResults().size() > 0) {
+      String trailer = video.getResults().stream()
+        .filter(Result::isOfficial)
+        .findFirst()
+        .orElse(video.getResults().get(0)).getKey();
+      return trailer;
+    }
+    return "";
+  }
+
+  public int getRandomNumber(int min, int max) {
+    return (int) ((Math.random() * (max - min)) + min);
   }
 }
