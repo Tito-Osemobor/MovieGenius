@@ -7,11 +7,14 @@ import com.titoosemobor.moviegenius.Entity.User;
 import com.titoosemobor.moviegenius.Exception.ProfileException;
 import com.titoosemobor.moviegenius.Service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,6 +64,28 @@ public class ProfileController {
         return ResponseEntity.ok(deleteProfileDTO);
       }
       throw new ProfileException.ProfileNotFound("Profile not found");
+    } catch (ProfileException.ProfileNotFound ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+  }
+
+  @GetMapping("/pictures")
+  public ResponseEntity<?> getAllProfilePictures(@AuthenticationPrincipal User authUser) throws IOException {
+    try {
+      return ResponseEntity.ok(profileService.allProfilePictureNames(authUser));
+    } catch (ProfileException.ProfilePictureNotFound ex) {
+      return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+  }
+
+  @GetMapping("/pictures/{fileName:.+}")
+  public ResponseEntity<?> serveProfilePicture(@PathVariable String fileName) throws IOException {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.IMAGE_JPEG);
+      return ResponseEntity.ok()
+        .headers(headers)
+        .body(profileService.profilePicture(fileName));
     } catch (ProfileException.ProfileNotFound ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
     }
