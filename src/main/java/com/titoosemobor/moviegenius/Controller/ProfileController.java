@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/moviegenius/users/profiles")
+@RequestMapping("/moviegenius/user/profiles")
 public class ProfileController {
   @Autowired
   private ProfileService profileService;
