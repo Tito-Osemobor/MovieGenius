@@ -79,7 +79,7 @@ public class ProfileController {
   }
 
   @GetMapping("/pictures/{fileName:.+}")
-  public ResponseEntity<?> serveProfilePicture(@PathVariable String fileName) throws IOException {
+  public ResponseEntity<?> getProfilePicture(@PathVariable String fileName) throws IOException {
     try {
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.IMAGE_JPEG);
