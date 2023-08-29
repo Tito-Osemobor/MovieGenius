@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @Entity
@@ -40,9 +39,6 @@ public class User implements UserDetails {
 
   @Enumerated(EnumType.STRING)
   private Role role;
-
-//  @ManyToMany()
-//  private Set<Movie> myList;
 
   public User(String email, String password, Role role) {
     this.email = email;
