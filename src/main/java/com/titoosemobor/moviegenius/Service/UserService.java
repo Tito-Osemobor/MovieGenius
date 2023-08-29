@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +25,7 @@ public class UserService {
   private PasswordEncoder passwordEncoder;
   @Autowired
   private UserDTOMapper userDTOMapper;
+  private final String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
 
   public List<UserDTOResponse> allUsers() {
     return userRepository.findAll()
@@ -57,6 +60,9 @@ public class UserService {
     if (passwordUpdateDTO.getCurrentPassword().equals(passwordUpdateDTO.getNewPassword())) {
       throw new UserException.PasswordMismatchException("Current and New password must not match");
     }
+    if (!isValidPassword(passwordUpdateDTO.getNewPassword(), passwordRegex)) {
+      throw new UserException.InvalidInformationException("New Password is invalid");
+    }
     if(!passwordUpdateDTO.getNewPassword().equals(passwordUpdateDTO.getReNewPassword())) {
       throw new UserException.PasswordMismatchException("New password and re-entered password do not match");
     }
@@ -75,5 +81,11 @@ public class UserService {
     else {
       throw new UserException.UserNotFoundException("Incorrect email and/or password");
     }
+  }
+
+  public Boolean isValidPassword(String newPassword, String regex) {
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(newPassword);
+    return matcher.matches();
   }
 }
