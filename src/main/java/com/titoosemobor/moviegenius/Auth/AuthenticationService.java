@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +24,26 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JWTService jwtService;
   private final AuthenticationManager authenticationManager;
+
   public Optional<AuthenticationResponse> register(RegisterRequest registerRequest) {
     if (registerRequest.getEmail().isEmpty() ||
-      registerRequest.getPassword().isEmpty()) {
+      registerRequest.getPassword().isEmpty() ||
+      registerRequest.getReEnterPassword().isEmpty()){
       throw new UserException.InvalidInputException("Enter email and password");
     }
-    if (isEmailAlreadyUsed(registerRequest.getEmail())) {
+    if(isEmailAlreadyUsed(registerRequest.getEmail())) {
       throw new UserException.EmailAlreadyUsedException("Email already in use");
+    }
+    String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+    if(!isValidRegex(registerRequest.getEmail(), emailRegex)) {
+      throw new UserException.InvalidInformationException("Email is invalid");
+    }
+    String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
+    if (!isValidRegex(registerRequest.getPassword(), passwordRegex)) {
+      throw new UserException.InvalidInformationException("Password is invalid");
+    }
+    if(!registerRequest.getPassword().equals(registerRequest.getReEnterPassword())) {
+      throw new UserException.PasswordMismatchException("Passwords do not match");
     }
     User user = User.builder()
       .email(registerRequest.getEmail())
@@ -61,5 +76,11 @@ public class AuthenticationService {
   public boolean isEmailAlreadyUsed(String email) {
     Optional<User> user = userRepository.findUserByEmail(email);
     return user.isPresent();
+  }
+
+  public Boolean isValidRegex(String newPassword, String regex) {
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(newPassword);
+    return matcher.matches();
   }
 }
