@@ -21,9 +21,8 @@ public class AuthenticationController {
   ) {
     try {
       return ResponseEntity.ok(service.register(registerRequest));
-    } catch (UserException.InvalidInputException ex) {
-      return ResponseEntity.badRequest().body(ex.getMessage());
-    } catch (UserException.EmailAlreadyUsedException ex) {
+    } catch (UserException.InvalidInputException | UserException.InvalidInformationException |
+             UserException.EmailAlreadyUsedException | UserException.PasswordMismatchException ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
     }
   }
