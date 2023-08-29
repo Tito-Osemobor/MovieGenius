@@ -9,11 +9,20 @@ import com.titoosemobor.moviegenius.Exception.ProfileException;
 import com.titoosemobor.moviegenius.Repository.ProfileRepository;
 import com.titoosemobor.moviegenius.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ProfileService {
@@ -23,6 +32,8 @@ public class ProfileService {
   private UserRepository userRepository;
   @Autowired
   private UserProfileDTOMapper userProfileDTOMapper;
+  @Value("${profile.picture.directory}")
+  private String profilePictureDirectory;
 
   public List<UserProfileDTO> allUserProfiles(UserDTORequest userDTORequest) {
     return profileRepository.findProfilesByUser(userRepository.findUserByEmail(userDTORequest.getEmail()).get())
@@ -72,5 +83,31 @@ public class ProfileService {
     Profile profile = profileRepository.findProfileById(profileId);
     profileRepository.deleteById(profileId);
     return UserProfileDTOMapper.INSTANCE.apply(profile);
+  }
+
+  public Set<String> allProfilePictureNames(User user) throws IOException {
+    Set<String> profilePictureNames = new TreeSet<>();
+
+    try (Stream<Path> paths = Files.list(Paths.get(profilePictureDirectory))) {
+      paths.filter(Files::isRegularFile)
+        .forEach(path -> profilePictureNames.add(String.valueOf(path.getFileName())));
+    }
+    if (profilePictureNames.isEmpty()) {
+      throw new ProfileException.ProfilePictureNotFound("No profile pictures found");
+    }
+    profilePictureNames.removeAll(user.getProfiles()
+      .stream()
+      .map(Profile::getProfileImage)
+      .collect(Collectors.toSet()));
+    return profilePictureNames;
+  }
+
+  public Resource profilePicture(String fileName) throws IOException{
+    Resource resource = new UrlResource(Path.of(profilePictureDirectory, fileName).toUri());
+
+    if (!resource.exists()) {
+      throw new ProfileException.ProfilePictureNotFound("Profile picture not found");
+    }
+    return new InputStreamResource(resource.getInputStream());
   }
 }
