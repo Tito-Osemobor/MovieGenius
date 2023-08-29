@@ -18,4 +18,10 @@ public class ProfileException extends RuntimeException {
       super(message);
     }
   }
+
+  public static class ProfilePictureNotFound extends RuntimeException {
+    public ProfilePictureNotFound(String message) {
+      super(message);
+    }
+  }
 }
