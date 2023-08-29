@@ -27,20 +27,11 @@ public class UserService {
   private UserDTOMapper userDTOMapper;
   private final String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
 
-  public List<UserDTOResponse> allUsers() {
-    return userRepository.findAll()
-      .stream()
-      .map(userDTOMapper)
-      .collect(Collectors.toList());
-  }
-
-  public Optional<UserDTOResponse> userById(Long id) {
-    Optional<User> userOptional = userRepository.findUserById(id);
-    if(userOptional.isEmpty()) {
+  public Optional<UserDTOResponse> authUser(User authUser) {
+    if(authUser == null) {
       throw new UserException.UserNotFoundException("User Not Found");
     }
-    return userOptional
-      .map(userDTOMapper);
+    return Optional.ofNullable(UserDTOMapper.INSTANCE.apply(authUser));
   }
 
   public Optional<UserDTOResponse> userByEmail(String email) {
