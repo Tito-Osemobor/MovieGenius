@@ -20,20 +20,10 @@ public class UserController {
   @Autowired
   private UserService userService;
 
-  @GetMapping
-  public ResponseEntity<List<UserDTOResponse>> getUsers() {
-    return new ResponseEntity<>(userService.allUsers(), HttpStatus.OK);
-  }
-
   @GetMapping("/{id}")
-  public ResponseEntity<?> getUserById(@PathVariable Long id,
-                                       @AuthenticationPrincipal User authUser) {
+  public ResponseEntity<?> getAuthUser(@AuthenticationPrincipal User authUser) {
     try {
-      if (isOwnedByAuthenticatedUser(userService.userById(id).get(), authUser)) {
-        return new ResponseEntity<>(userService.userById(id), HttpStatus.OK);
-      }
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-        .body("You are not authorized to access this profile.");
+      return new ResponseEntity<>(userService.authUser(authUser), HttpStatus.OK);
     } catch (UserException.UserNotFoundException ex){
       return ResponseEntity.badRequest().body(ex.getMessage());
     }
