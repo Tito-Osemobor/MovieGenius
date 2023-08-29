@@ -52,11 +52,8 @@ public class UserController {
       }
       return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body("You are not authorized to access this profile");
-    } catch (UserException.InvalidInputException ex) {
-      return ResponseEntity.badRequest().body(ex.getMessage());
-    } catch (UserException.PasswordMismatchException ex) {
-      return ResponseEntity.badRequest().body(ex.getMessage());
-    } catch (UserException.UserNotFoundException ex) {
+    } catch (UserException.InvalidInputException | UserException.PasswordMismatchException |
+             UserException.UserNotFoundException ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during password update.");
