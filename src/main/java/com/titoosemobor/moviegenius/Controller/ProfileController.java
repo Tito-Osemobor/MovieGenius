@@ -32,9 +32,7 @@ public class ProfileController {
     try {
       UserProfileDTO createdProfile = profileService.createProfile(authUser, userProfileDTO);
       return ResponseEntity.ok(createdProfile);
-    } catch (ProfileException.MaxNumberOfProfiles ex) {
-      return ResponseEntity.badRequest().body(ex.getMessage());
-    }catch (ProfileException.NameAlreadyInUse ex) {
+    } catch (ProfileException.MaxNumberOfProfiles | ProfileException.NameAlreadyInUse ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
     }
    }
@@ -49,9 +47,7 @@ public class ProfileController {
         return ResponseEntity.ok(updateProfileDTO);
       }
       throw new ProfileException.ProfileNotFound("Profile not found");
-    } catch (ProfileException.NameAlreadyInUse ex) {
-      return ResponseEntity.badRequest().body(ex.getMessage());
-    } catch (ProfileException.ProfileNotFound ex) {
+    } catch (ProfileException.NameAlreadyInUse | ProfileException.ProfileNotFound ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
     }
   }
