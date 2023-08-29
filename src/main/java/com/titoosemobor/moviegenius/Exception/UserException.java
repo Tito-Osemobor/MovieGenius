@@ -8,6 +8,12 @@ public class UserException extends RuntimeException {
     }
   }
 
+  public static class InvalidInformationException extends RuntimeException {
+    public InvalidInformationException(String message) {
+      super(message);
+    }
+  }
+
   public static class PasswordMismatchException extends RuntimeException {
     public PasswordMismatchException(String message) {
       super(message);
