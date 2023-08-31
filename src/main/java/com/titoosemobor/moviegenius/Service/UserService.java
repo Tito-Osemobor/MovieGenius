@@ -79,4 +79,10 @@ public class UserService {
     Matcher matcher = pattern.matcher(newPassword);
     return matcher.matches();
   }
+
+  public UserDTOResponse deleteUserService(User authUser) {
+    UserDTOResponse userDTOResponse = UserDTOMapper.INSTANCE.apply(authUser);
+    userRepository.delete(authUser);
+    return userDTOResponse;
+  }
 }
