@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/moviegenius/users")
+@RequestMapping("/moviegenius/user")
 public class UserController {
   @Autowired
   private UserService userService;
 
-  @GetMapping("/{id}")
+  @GetMapping
   public ResponseEntity<?> getAuthUser(@AuthenticationPrincipal User authUser) {
     try {
       return new ResponseEntity<>(userService.authUser(authUser), HttpStatus.OK);
@@ -43,11 +43,14 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body("You are not authorized to access this profile");
     } catch (UserException.InvalidInputException | UserException.PasswordMismatchException |
-             UserException.UserNotFoundException ex) {
+             UserException.InvalidInformationException | UserException.UserNotFoundException ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
-    } catch (Exception ex) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during password update.");
     }
+  }
+
+  @DeleteMapping("/delete")
+  public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User authUser) {
+    return ResponseEntity.ok(userService.deleteUserService(authUser));
   }
 
   public boolean isOwnedByAuthenticatedUser(UserDTOResponse requestedUser, User authUser) {
