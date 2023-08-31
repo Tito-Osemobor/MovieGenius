@@ -1,5 +1,6 @@
 package com.titoosemobor.moviegenius.Config;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -58,9 +59,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
       }
       filterChain.doFilter(request, response);
-    }
-    catch (MalformedJwtException e) {
-      response.sendError(HttpStatus.BAD_REQUEST.value(), "Malformed JWT token");
+    } catch (MalformedJwtException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.getWriter().write("Malformed Token");
+    } catch (ExpiredJwtException e) {
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      response.getWriter().write("Token has expired");
     }
   }
 }
