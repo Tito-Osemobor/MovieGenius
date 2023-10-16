@@ -5,7 +5,7 @@ import com.titoosemobor.moviegenius.DTO.MovieDTOMapper;
 import com.titoosemobor.moviegenius.Entity.*;
 import com.titoosemobor.moviegenius.Exception.MovieException;
 import com.titoosemobor.moviegenius.Repository.GenreRepository;
-import com.titoosemobor.moviegenius.Repository.MovieRespository;
+import com.titoosemobor.moviegenius.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -19,7 +19,7 @@ public class TMDBApiService {
   @Autowired
   private TMDBApiClient tmdbApiClient;
   @Autowired
-  private MovieRespository movieRespository;
+  private MovieRepository movieRepository;
   @Autowired
   private GenreRepository genreRepository;
 
@@ -51,7 +51,7 @@ public class TMDBApiService {
     movie.setTrailer();
     movie.setGenres(existingGenres);
 
-    movieRespository.save(movie);
+    movieRepository.save(movie);
     return Optional.of(MovieDTOMapper.INSTANCE.apply(movie));
   }
 
@@ -93,12 +93,12 @@ public class TMDBApiService {
           .overview(movieResponse.getOverview())
           .trailer(trailer)
           .build();
-        movieRespository.save(movie);
+        movieRepository.save(movie);
         return movie;
       })
       .filter(Objects::nonNull)
       .collect(Collectors.toSet());
-    movieRespository.saveAll(movies);
+    movieRepository.saveAll(movies);
     return Optional.of(movies.stream().map(MovieDTOMapper.INSTANCE::apply).collect(Collectors.toSet()));
   }
 
