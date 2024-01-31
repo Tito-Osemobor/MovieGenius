@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/moviegenius/movies")
 public class MovieController {
     @Autowired
