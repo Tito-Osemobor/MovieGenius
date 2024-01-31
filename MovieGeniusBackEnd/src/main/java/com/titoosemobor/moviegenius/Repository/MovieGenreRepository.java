@@ -11,7 +11,10 @@ import java.util.Set;
 
 @Repository
 public interface MovieGenreRepository extends JpaRepository<MovieGenre, Long> {
-  @Query("SELECT mg.movie FROM MovieGenre mg WHERE mg.genre.id IN :genreIds GROUP BY mg.movie HAVING COUNT(DISTINCT mg.genre.id) = :genreCount")
+  @Query("SELECT mg.movie " +
+      "FROM MovieGenre mg " +
+      "WHERE mg.genre.id IN :genreIds " +
+      "GROUP BY mg.movie HAVING COUNT(DISTINCT mg.genre.id) = :genreCount")
   Set<Movie> findMoviesByAllGenreIds(@Param("genreIds") Set<Long> genreIds, @Param("genreCount") Long genreCount);
 }
 
