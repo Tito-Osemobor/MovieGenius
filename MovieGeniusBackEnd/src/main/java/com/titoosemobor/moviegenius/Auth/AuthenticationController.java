@@ -4,23 +4,21 @@ import com.titoosemobor.moviegenius.Exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
   @Autowired
-  private final AuthenticationService service;
+  private final AuthenticationService authenticationService;
+
   @PostMapping("/register")
   public ResponseEntity<?> register (
-    @RequestBody RegisterRequest registerRequest
+    @RequestBody RegisterRequest request
   ) {
     try {
-      return ResponseEntity.ok(service.register(registerRequest));
+        return ResponseEntity.ok(authenticationService.register(request));
     } catch (UserException.InvalidInputException | UserException.InvalidInformationException |
              UserException.EmailAlreadyUsedException | UserException.PasswordMismatchException ex) {
       return ResponseEntity.badRequest().body(ex.getMessage());
@@ -29,8 +27,8 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> register (
-    @RequestBody AuthenticationRequest registerRequest
+    @RequestBody AuthenticationRequest request
   ) {
-    return ResponseEntity.ok(service.authenticate(registerRequest));
+    return ResponseEntity.ok(authenticationService.authenticate(request));
   }
 }
