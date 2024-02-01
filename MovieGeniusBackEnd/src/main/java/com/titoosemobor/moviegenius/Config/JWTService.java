@@ -29,20 +29,22 @@ public class JWTService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+  public String generateToken(UserDetails userDetails, Boolean rememberMe) {
+    return generateToken(new HashMap<>(), userDetails, rememberMe);
   }
 
   public String generateToken(
     Map<String, Object> extraClaims,
-    UserDetails userDetails
+    UserDetails userDetails,
+    Boolean rememberMe
   ) {
+    long expirationTime = rememberMe ? 1000 * 60 * 60 * 24 * 7 : 1000 * 60 * 60 * 24;
     return Jwts
       .builder()
       .setClaims(extraClaims)
       .setSubject(userDetails.getUsername())
       .setIssuedAt(new Date(System.currentTimeMillis()))
-      .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+      .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
       .signWith(getSignInKey(), SignatureAlgorithm.HS256)
       .compact();
   }

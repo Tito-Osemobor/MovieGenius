@@ -52,22 +52,22 @@ public class AuthenticationService {
       .createdAt(new Timestamp(System.currentTimeMillis()))
       .build();
     userRepository.save(user);
-    var jwtToken = jwtService.generateToken(user);
+    var jwtToken = jwtService.generateToken(user, registerRequest.getRememberMe());
     return Optional.ofNullable(AuthenticationResponse.builder()
       .token(jwtToken)
       .build());
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest registerRequest) {
+  public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
     authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(
-        registerRequest.getEmail(),
-        registerRequest.getPassword()
+        authRequest.getEmail(),
+        authRequest.getPassword()
       )
     );
-    User user = userRepository.findUserByEmail(registerRequest.getEmail())
+    User user = userRepository.findUserByEmail(authRequest.getEmail())
       .orElseThrow(() -> new UserException.UserNotFoundException("Incorrect email and/or password"));
-    var jwtToken = jwtService.generateToken(user);
+    var jwtToken = jwtService.generateToken(user, authRequest.getRememberMe());
     return AuthenticationResponse.builder()
       .token(jwtToken)
       .build();
