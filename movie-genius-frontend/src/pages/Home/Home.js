@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import "./Home.css";
 
 const Home = () => {
   return (
@@ -39,13 +40,33 @@ const Home = () => {
             <form>
               <div className={"flex justify-center items-center space-x-2"}>
                 <div>
-                  <input className={"h-15 bg-opacity-30 bg-black rounded-md w-96 p-5 bg-"} placeholder={"Email address"}/>
+                  <div className="relative">
+                    <input type="text" id="emailInput"
+                           className="block px-3 pb-2.5
+                                      pt-4 w-96 h-16 text-md text-white
+                                      bg-opacity-30 bg-black rounded-md
+                                      appearance-none duration-300
+                                      focus:outline-none
+                                      focus:ring-0 focus:border-2 focus:border-gray-100 peer"
+                           placeholder=" "/>
+                    <label htmlFor="emailInput"
+                           className="absolute text-md text-gray-300 font-semibold bg-none
+                                      duration-300 transform -translate-y-4 scale-75 top-5
+                                      z-10 origin-[0] px-3
+                                      peer-placeholder-shown:scale-100
+                                      peer-placeholder-shown:-translate-y-3 peer-placeholder-shown:top-1/2
+                                      peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4
+                                      start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                      Email address
+                    </label>
+                  </div>
                 </div>
                 <div className={"items-center"}>
-                  <button className={"flex flex-row items-center bg-red-600 rounded-md h-16 py-2 px-6 text-white font-bold text-3xl"}>
-                    <p>Get Started</p>
+                  <button
+                    className={"flex flex-row items-center bg-red-600 group active:bg-red-700 rounded-md h-16 py-2 px-6 text-white font-bold"}>
+                    <p className={"group-active:text-gray-300 text-2xl"}>Get Started</p>
                     <div>
-                      <ArrowForwardIcon sx={{
+                      <ArrowForwardIcon className={"group-active:text-gray-300"} sx={{
                         fontSize: 24,
                         fontWeight: 'bold',
                         color: 'white',
@@ -66,7 +87,8 @@ const Home = () => {
 
       </footer>
     </div>
-   );
+  );
 };
 
 export default Home;
+
