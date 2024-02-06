@@ -1,9 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import "../assets/styles/Home.css";
 import Footer from "../components/Footer";
 import Input from "../components/common/Input";
+import Button from "../components/common/Button";
 
 const Home = () => {
   return (
@@ -44,21 +44,7 @@ const Home = () => {
                 <div>
                   <Input placeholder={"Email address"} />
                 </div>
-                <div className={"items-center"}>
-                  <button
-                    className={"flex flex-row items-center bg-red-600 group active:bg-red-700 rounded-md h-16 py-2 px-6 text-white font-bold"}>
-                    <p className={"group-active:text-gray-300 text-2xl"}>Get Started</p>
-                    <div>
-                      <ArrowForwardIcon className={"group-active:text-gray-300"} sx={{
-                        fontSize: 24,
-                        fontWeight: 'bold',
-                        color: 'white',
-                        lineHeight: 28,
-                        marginLeft: 2,
-                      }}/>
-                    </div>
-                  </button>
-                </div>
+                <Button text={"Get Started"} textSize={"text-2xl"} iconSize={25}/>
               </div>
             </form>
           </div>
