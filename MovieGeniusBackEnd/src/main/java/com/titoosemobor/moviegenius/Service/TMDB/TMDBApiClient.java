@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.TMDB;
+package com.titoosemobor.moviegenius.Service.TMDB;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class TMDBApiClient {
   static Dotenv dotenv = Dotenv.configure().load();
   private final String BASE_URL = "https://api.themoviedb.org/3";
-  private final String TMDB_BEARER_TOKEN = dotenv.get("BEARER_TOKEN");
+  private final String TMDB_BEARER_TOKEN = dotenv.get("TMDB_BEARER_TOKEN");
   private WebClient webClient;
 
   public TMDBApiClient () {
