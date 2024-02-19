@@ -99,7 +99,7 @@ public class TMDBApiService {
       .filter(Objects::nonNull)
       .collect(Collectors.toSet());
     movieRepository.saveAll(movies);
-    return Optional.of(movies.stream().map(MovieDTOMapper.INSTANCE::apply).collect(Collectors.toSet()));
+    return Optional.of(movies.stream().map(MovieDTOMapper.INSTANCE).collect(Collectors.toSet()));
   }
 
   public String fetchMovieTrailer(Long movieId) {
