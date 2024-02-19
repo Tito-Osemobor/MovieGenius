@@ -1,4 +1,4 @@
-package com.titoosemobor.moviegenius.TMDB;
+package com.titoosemobor.moviegenius.Service.TMDB;
 
 import com.titoosemobor.moviegenius.DTO.MovieDTO;
 import com.titoosemobor.moviegenius.DTO.MovieDTOMapper;
@@ -23,7 +23,7 @@ public class TMDBApiService {
   @Autowired
   private GenreRepository genreRepository;
 
-  public Optional<MovieDTO> fetchMovieById(long movieId) {
+  public Optional<MovieDTO> fetchMovieById(Long movieId) {
     Optional<Movie> movieOptional = Optional.ofNullable(tmdbApiClient.getWebClient()
       .get()
         .uri(UriComponentsBuilder
@@ -55,7 +55,7 @@ public class TMDBApiService {
     return Optional.of(MovieDTOMapper.INSTANCE.apply(movie));
   }
 
-  public Optional<Set<MovieDTO>> fetchMoviesByGenre(Integer genreId) {
+  public Optional<Set<MovieDTO>> fetchMoviesByGenre(Long genreId) {
     Discover discover = tmdbApiClient.getWebClient()
       .get()
       .uri(UriComponentsBuilder
@@ -109,7 +109,7 @@ public class TMDBApiService {
       .retrieve()
       .bodyToMono(Video.class)
       .block();
-    if (video.getResults().size() > 0) {
+    if (!video.getResults().isEmpty()) {
       return video.getResults().stream()
         .filter(Result::isOfficial)
         .findFirst()
