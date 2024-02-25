@@ -28,10 +28,6 @@ const Login = () => {
                   </div>
                 </div>
                 <div className={"items-center"}>
-                  {/*<input id={"rememberMe"} name={"rememberMe"} type={"checkbox"} className={"w-5 h-5"}/>*/}
-                  {/*<label htmlFor={"rememberMe"}>*/}
-                  {/*  Remember me*/}
-                  {/*</label>*/}
                   <input id="rememberMe" type="checkbox" value=""
                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300
                                     rounded focus:ring-blue-500
