@@ -39,4 +39,12 @@ public class MovieService {
   public MovieDTO fetchMovieById(Long movieId) {
     return MovieDTOMapper.INSTANCE.apply(movieRepository.findMovieById(movieId));
   }
+
+  public Set<String> fetchRandomPosters() {
+    Set<String> posters = movieRepository.findRandomPosters()
+      .stream()
+      .map(poster -> "https://image.tmdb.org/t/p/original" + poster)
+      .collect(Collectors.toSet());
+    return posters;
+  }
 }
