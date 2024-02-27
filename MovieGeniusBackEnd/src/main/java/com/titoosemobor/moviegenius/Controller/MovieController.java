@@ -17,13 +17,16 @@ public class MovieController {
 
   @GetMapping
   public ResponseEntity<?> getMoviesByGenre(@RequestParam("genres")Set<String> genreId) {
-    Set<MovieDTO> movies = movieService.fetchMoviesByGenre(genreId);
-    return ResponseEntity.ok(movies);
+    return ResponseEntity.ok(movieService.fetchMoviesByGenre(genreId));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getMovieById(@PathVariable Long id) {
-    MovieDTO movie = movieService.fetchMovieById(id);
-    return ResponseEntity.ok(movie);
+    return ResponseEntity.ok(movieService.fetchMovieById(id));
+  }
+
+  @GetMapping("/posters")
+  public ResponseEntity<?> getRandomPosters() {
+    return ResponseEntity.ok(movieService.fetchRandomPosters());
   }
 }
