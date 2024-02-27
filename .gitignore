@@ -1,1 +1,6 @@
 movie-genius-frontend.iml
+
+/src/main/resources/.env
+./.gitignore
+/.idea/
+/target/
