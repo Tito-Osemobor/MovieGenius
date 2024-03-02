@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequestMapping("/moviegenius/user/profiles")
 public class ProfileController {
   @Autowired
