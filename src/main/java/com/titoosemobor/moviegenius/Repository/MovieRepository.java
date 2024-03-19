@@ -11,6 +11,6 @@ import java.util.Set;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
   Movie findMovieById(Long id);
 
-  @Query(value = "SELECT poster_path FROM movies ORDER BY random() LIMIT 18", nativeQuery = true)
+  @Query(value = "SELECT poster_path FROM movies LIMIT 28", nativeQuery = true)
   Set<String> findRandomPosters();
 }
