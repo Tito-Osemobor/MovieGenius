@@ -8,6 +8,7 @@ import com.titoosemobor.moviegenius.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,26 +26,27 @@ public class AuthenticationService {
   private final JWTService jwtService;
   private final AuthenticationManager authenticationManager;
 
+
+  private final String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+  private final String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
+
   public Optional<AuthenticationResponse> register(RegisterRequest registerRequest) {
     if (registerRequest.getEmail().isEmpty() ||
       registerRequest.getPassword().isEmpty() ||
       registerRequest.getReEnterPassword().isEmpty()){
       throw new UserException.InvalidInputException("Enter email and password");
     }
+
     if(isEmailAlreadyUsed(registerRequest.getEmail())) {
       throw new UserException.EmailAlreadyUsedException("Email already in use");
     }
-    String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-    if(!isValidRegex(registerRequest.getEmail(), emailRegex)) {
-      throw new UserException.InvalidInformationException("Email is invalid");
+
+    if(isValidRegex(registerRequest.getEmail(), emailRegex, "Email") && isValidRegex(registerRequest.getPassword(), passwordRegex, "Password")) {
+      if(!registerRequest.getPassword().equals(registerRequest.getReEnterPassword())) {
+        throw new UserException.PasswordMismatchException("Passwords do not match");
+      }
     }
-    String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
-    if (!isValidRegex(registerRequest.getPassword(), passwordRegex)) {
-      throw new UserException.InvalidInformationException("Password is invalid");
-    }
-    if(!registerRequest.getPassword().equals(registerRequest.getReEnterPassword())) {
-      throw new UserException.PasswordMismatchException("Passwords do not match");
-    }
+
     User user = User.builder()
       .email(registerRequest.getEmail())
       .password(passwordEncoder.encode(registerRequest.getPassword()))
@@ -53,34 +55,59 @@ public class AuthenticationService {
       .build();
     userRepository.save(user);
     var jwtToken = jwtService.generateToken(user, registerRequest.getRememberMe());
+
     return Optional.ofNullable(AuthenticationResponse.builder()
       .token(jwtToken)
       .build());
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
-    authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(
-        authRequest.getEmail(),
-        authRequest.getPassword()
-      )
-    );
-    User user = userRepository.findUserByEmail(authRequest.getEmail())
-      .orElseThrow(() -> new UserException.UserNotFoundException("Incorrect email and/or password"));
-    var jwtToken = jwtService.generateToken(user, authRequest.getRememberMe());
+    var jwtToken = "";
+    try {
+      if(isValidRegex(authRequest.getEmail(), emailRegex, "Email") && isValidRegex(authRequest.getPassword(), passwordRegex, "Password")) {
+        authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+                  authRequest.getEmail(),
+                  authRequest.getPassword()
+        ));
+
+        User user = userRepository.findUserByEmail(authRequest.getEmail())
+                .orElseThrow(() -> new UserException.UserNotFoundException("User not found"));
+        jwtToken = jwtService.generateToken(user, authRequest.getRememberMe());
+      }
+    } catch (AuthenticationException e) {
+      // Authentication failed
+      throw new UserException.AuthenticationFailedException("Authentication failed: " + e.getMessage());
+    } catch (UserException e) {
+      throw new UserException.InvalidInformationException(e.getMessage());
+    }
+
+
     return AuthenticationResponse.builder()
-      .token(jwtToken)
-      .build();
+            .token(jwtToken)
+            .build();
   }
 
   public boolean isEmailAlreadyUsed(String email) {
-    Optional<User> user = userRepository.findUserByEmail(email);
-    return user.isPresent();
+    try {
+      if(isValidRegex(email, emailRegex, "Email")) {
+        Optional<User> user = userRepository.findUserByEmail(email);
+        return user.isPresent();
+      } else {
+        return false;
+      }
+    } catch (UserException e) {
+      throw new UserException.EmailAlreadyUsedException("Email is already in use");
+    }
   }
 
-  public Boolean isValidRegex(String newPassword, String regex) {
+  public boolean isValidRegex(String string, String regex, String name) {
     Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(newPassword);
-    return matcher.matches();
+    Matcher matcher = pattern.matcher(string);
+    if (matcher.matches()) {
+      return matcher.matches();
+    } else {
+      throw new UserException.InvalidInformationException(name + " is invalid");
+    }
   }
 }
