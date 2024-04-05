@@ -7,6 +7,7 @@ import com.titoosemobor.moviegenius.Entity.User;
 import com.titoosemobor.moviegenius.Exception.ProfileException;
 import com.titoosemobor.moviegenius.Service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,9 +19,12 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${allowed.origins}")
 @RequestMapping("/moviegenius/user/profiles")
 public class ProfileController {
+  @Value("${allowed.origins}")
+  private String allowedOrigins;
+
   @Autowired
   private ProfileService profileService;
 

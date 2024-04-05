@@ -6,6 +6,7 @@ import com.titoosemobor.moviegenius.Entity.User;
 import com.titoosemobor.moviegenius.Exception.UserException;
 import com.titoosemobor.moviegenius.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${allowed.origins}")
 @RequestMapping("/moviegenius/user")
 public class UserController {
+  @Value("${allowed.origins}")
+  private String allowedOrigins;
+
   @Autowired
   private UserService userService;
 

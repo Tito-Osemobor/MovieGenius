@@ -3,15 +3,19 @@ package com.titoosemobor.moviegenius.Controller;
 import com.titoosemobor.moviegenius.DTO.MovieDTO;
 import com.titoosemobor.moviegenius.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${allowed.origins}")
 @RequestMapping("/moviegenius/movies")
 public class MovieController {
+  @Value("${allowed.origins}")
+  private String allowedOrigins;
+
   @Autowired
   private MovieService movieService;
 
