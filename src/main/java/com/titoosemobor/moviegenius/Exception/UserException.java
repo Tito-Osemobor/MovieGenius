@@ -31,4 +31,10 @@ public class UserException extends RuntimeException {
       super(message);
     }
   }
+
+  public static class AuthenticationFailedException extends RuntimeException {
+    public AuthenticationFailedException(String message) {
+      super(message);
+    }
+  }
 }
